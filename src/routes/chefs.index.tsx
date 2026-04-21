@@ -20,7 +20,7 @@ const searchSchema = z.object({
   budget: z.coerce.number().optional(),
 });
 
-export const Route = createFileRoute("/chefs")({
+export const Route = createFileRoute("/chefs/")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
