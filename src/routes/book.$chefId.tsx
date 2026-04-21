@@ -42,7 +42,7 @@ function BookingPage() {
     (async () => {
       const { data: cp } = await supabase
         .from("chef_profiles")
-        .select(`profiles:profiles!chef_profiles_user_id_fkey(display_name)`)
+        .select(`profiles:profiles!chef_profiles_profile_fkey(display_name)`)
         .eq("id", chefId).maybeSingle();
       const p = Array.isArray(cp?.profiles) ? cp?.profiles?.[0] : cp?.profiles;
       setChefName(p?.display_name ?? "this chef");

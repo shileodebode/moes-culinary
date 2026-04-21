@@ -56,8 +56,8 @@ function BookingDetailPage() {
         .from("bookings")
         .select(`
           id, event_date, guests, location, status, notes, budget, client_id, chef_id,
-          chef:chef_profiles!bookings_chef_id_fkey(id, user_id, profiles:profiles!chef_profiles_user_id_fkey(display_name)),
-          client:profiles!bookings_client_id_fkey(display_name)
+          chef:chef_profiles!bookings_chef_id_fkey(id, user_id, profiles:profiles!chef_profiles_profile_fkey(display_name)),
+          client:profiles!bookings_client_profile_fkey(display_name)
         `)
         .eq("id", bookingId).maybeSingle();
 

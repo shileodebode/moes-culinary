@@ -35,8 +35,8 @@ function AdminPage() {
 
   const load = async () => {
     const [{ data: cps }, { data: bks }, { count: chefCount }, { count: clientCount }] = await Promise.all([
-      supabase.from("chef_profiles").select(`id, headline, city, years_experience, hourly_rate, status, profiles:profiles!chef_profiles_user_id_fkey(display_name)`).order("created_at", { ascending: false }),
-      supabase.from("bookings").select(`id, event_date, status, budget, client:profiles!bookings_client_id_fkey(display_name), chef:chef_profiles!bookings_chef_id_fkey(profiles:profiles!chef_profiles_user_id_fkey(display_name))`).order("created_at", { ascending: false }).limit(50),
+      supabase.from("chef_profiles").select(`id, headline, city, years_experience, hourly_rate, status, profiles:profiles!chef_profiles_profile_fkey(display_name)`).order("created_at", { ascending: false }),
+      supabase.from("bookings").select(`id, event_date, status, budget, client:profiles!bookings_client_profile_fkey(display_name), chef:chef_profiles!bookings_chef_id_fkey(profiles:profiles!chef_profiles_profile_fkey(display_name))`).order("created_at", { ascending: false }).limit(50),
       supabase.from("user_roles").select("*", { count: "exact", head: true }).eq("role", "chef"),
       supabase.from("user_roles").select("*", { count: "exact", head: true }).eq("role", "client"),
     ]);
