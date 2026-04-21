@@ -50,7 +50,7 @@ function ChefDetailPage() {
         .from("chef_profiles")
         .select(`
           id, user_id, headline, bio, city, country, cuisines, specialties, years_experience, hourly_rate, cover_image_url,
-          profiles:profiles!chef_profiles_user_id_fkey(display_name, avatar_url)
+          profiles:profiles!chef_profiles_profile_fkey(display_name, avatar_url)
         `)
         .eq("id", chefId)
         .maybeSingle();
@@ -60,7 +60,7 @@ function ChefDetailPage() {
       const [{ data: services }, { data: portfolio }, { data: reviews }] = await Promise.all([
         supabase.from("chef_services").select(`id, price_from, description, category:service_categories(name, slug)`).eq("chef_id", chefId),
         supabase.from("portfolio_items").select("id, image_url, caption").eq("chef_id", chefId),
-        supabase.from("reviews").select(`id, rating, comment, created_at, client:profiles!reviews_client_id_fkey(display_name)`).eq("chef_id", chefId).order("created_at", { ascending: false }),
+        supabase.from("reviews").select(`id, rating, comment, created_at, client:profiles!reviews_client_profile_fkey(display_name)`).eq("chef_id", chefId).order("created_at", { ascending: false }),
       ]);
 
       const profileObj = Array.isArray(cp.profiles) ? cp.profiles[0] : cp.profiles;

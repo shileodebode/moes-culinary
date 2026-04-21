@@ -9,29 +9,10 @@ export interface ChefFilters {
   search?: string;
 }
 
-interface RawChef {
-  id: string;
-  user_id: string;
-  headline: string;
-  bio: string | null;
-  city: string;
-  country: string | null;
-  cuisines: string[];
-  specialties: string[];
-  years_experience: number;
-  hourly_rate: number;
-  cover_image_url: string | null;
-  status: string;
-  profiles: { display_name: string; avatar_url: string | null } | null;
-}
-
 export async function fetchChefs(filters: ChefFilters = {}): Promise<ChefCardData[]> {
   let query = supabase
     .from("chef_profiles")
-    .select(`
-      id, user_id, headline, city, cuisines, hourly_rate, years_experience, cover_image_url,
-      profiles:profiles!chef_profiles_user_id_fkey(display_name, avatar_url)
-    `)
+    .select(`id, user_id, headline, city, cuisines, hourly_rate, years_experience, cover_image_url`)
     .eq("status", "approved");
 
   if (filters.city) query = query.ilike("city", `%${filters.city}%`);
@@ -42,9 +23,9 @@ export async function fetchChefs(filters: ChefFilters = {}): Promise<ChefCardDat
   const { data, error } = await query.order("years_experience", { ascending: false });
   if (error) throw error;
 
-  let chefs = (data ?? []) as unknown as Array<RawChef & { profiles: { display_name: string; avatar_url: string | null } | null }>;
+  let chefs = data ?? [];
 
-  // Filter by category (requires join)
+  // Filter by category
   if (filters.categorySlug) {
     const { data: catData } = await supabase
       .from("service_categories").select("id").eq("slug", filters.categorySlug).maybeSingle();
@@ -56,29 +37,41 @@ export async function fetchChefs(filters: ChefFilters = {}): Promise<ChefCardDat
     }
   }
 
-  // Fetch ratings in one query
-  const ids = chefs.map((c) => c.id);
-  const ratingMap = new Map<string, { avg: number; count: number }>();
-  if (ids.length) {
-    const { data: reviews } = await supabase.from("reviews").select("chef_id, rating").in("chef_id", ids);
-    (reviews ?? []).forEach((r) => {
-      const cur = ratingMap.get(r.chef_id) ?? { avg: 0, count: 0 };
-      cur.avg = (cur.avg * cur.count + r.rating) / (cur.count + 1);
-      cur.count += 1;
-      ratingMap.set(r.chef_id, cur);
-    });
-  }
+  const chefIds = chefs.map((c) => c.id);
+  const userIds = chefs.map((c) => c.user_id);
 
-  return chefs.map((c) => ({
-    id: c.id,
-    display_name: c.profiles?.display_name ?? "Chef",
-    avatar_url: c.cover_image_url ?? c.profiles?.avatar_url ?? null,
-    headline: c.headline,
-    city: c.city,
-    cuisines: c.cuisines,
-    hourly_rate: Number(c.hourly_rate),
-    years_experience: c.years_experience,
-    rating: ratingMap.get(c.id)?.avg ?? null,
-    review_count: ratingMap.get(c.id)?.count ?? 0,
-  }));
+  // Parallel fetch profiles + ratings
+  const [{ data: profiles }, { data: reviews }] = await Promise.all([
+    userIds.length
+      ? supabase.from("profiles").select("user_id, display_name, avatar_url").in("user_id", userIds)
+      : Promise.resolve({ data: [] as Array<{ user_id: string; display_name: string; avatar_url: string | null }> }),
+    chefIds.length
+      ? supabase.from("reviews").select("chef_id, rating").in("chef_id", chefIds)
+      : Promise.resolve({ data: [] as Array<{ chef_id: string; rating: number }> }),
+  ]);
+
+  const profileMap = new Map((profiles ?? []).map((p) => [p.user_id, p]));
+  const ratingMap = new Map<string, { avg: number; count: number }>();
+  (reviews ?? []).forEach((r) => {
+    const cur = ratingMap.get(r.chef_id) ?? { avg: 0, count: 0 };
+    cur.avg = (cur.avg * cur.count + r.rating) / (cur.count + 1);
+    cur.count += 1;
+    ratingMap.set(r.chef_id, cur);
+  });
+
+  return chefs.map((c) => {
+    const p = profileMap.get(c.user_id);
+    return {
+      id: c.id,
+      display_name: p?.display_name ?? "Chef",
+      avatar_url: c.cover_image_url ?? p?.avatar_url ?? null,
+      headline: c.headline,
+      city: c.city,
+      cuisines: c.cuisines,
+      hourly_rate: Number(c.hourly_rate),
+      years_experience: c.years_experience,
+      rating: ratingMap.get(c.id)?.avg ?? null,
+      review_count: ratingMap.get(c.id)?.count ?? 0,
+    };
+  });
 }

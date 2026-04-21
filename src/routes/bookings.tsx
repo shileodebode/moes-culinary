@@ -40,7 +40,7 @@ function BookingsPage() {
           id, event_date, guests, location, status, budget,
           chef:chef_profiles!bookings_chef_id_fkey(
             id,
-            profiles:profiles!chef_profiles_user_id_fkey(display_name, avatar_url)
+            profiles:profiles!chef_profiles_profile_fkey(display_name, avatar_url)
           )
         `)
         .eq("client_id", user.id)

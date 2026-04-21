@@ -104,6 +104,13 @@ export type Database = {
             referencedRelation: "chef_profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "bookings_client_profile_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       chef_profiles: {
@@ -155,7 +162,15 @@ export type Database = {
           user_id?: string
           years_experience?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "chef_profiles_profile_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       chef_services: {
         Row: {
@@ -335,6 +350,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "chef_profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_client_profile_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
           },
         ]
       }
