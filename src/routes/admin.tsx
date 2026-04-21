@@ -60,7 +60,7 @@ function AdminPage() {
 
   useEffect(() => { if (hasRole(roles, "admin")) load(); }, [roles]);
 
-  const updateChefStatus = async (id: string, status: string) => {
+  const updateChefStatus = async (id: string, status: "approved" | "pending" | "rejected" | "suspended") => {
     const { error } = await supabase.from("chef_profiles").update({ status }).eq("id", id);
     if (error) toast.error(error.message);
     else { toast.success(`Chef ${status}`); load(); }

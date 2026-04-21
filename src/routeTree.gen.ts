@@ -9,38 +9,192 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ChefsRouteImport } from './routes/chefs'
+import { Route as BookingsRouteImport } from './routes/bookings'
+import { Route as BecomeAChefRouteImport } from './routes/become-a-chef'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ChefsChefIdRouteImport } from './routes/chefs.$chefId'
+import { Route as ChefDashboardRouteImport } from './routes/chef.dashboard'
+import { Route as BookingsBookingIdRouteImport } from './routes/bookings.$bookingId'
+import { Route as BookChefIdRouteImport } from './routes/book.$chefId'
 
+const ChefsRoute = ChefsRouteImport.update({
+  id: '/chefs',
+  path: '/chefs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingsRoute = BookingsRouteImport.update({
+  id: '/bookings',
+  path: '/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BecomeAChefRoute = BecomeAChefRouteImport.update({
+  id: '/become-a-chef',
+  path: '/become-a-chef',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChefsChefIdRoute = ChefsChefIdRouteImport.update({
+  id: '/$chefId',
+  path: '/$chefId',
+  getParentRoute: () => ChefsRoute,
+} as any)
+const ChefDashboardRoute = ChefDashboardRouteImport.update({
+  id: '/chef/dashboard',
+  path: '/chef/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingsBookingIdRoute = BookingsBookingIdRouteImport.update({
+  id: '/$bookingId',
+  path: '/$bookingId',
+  getParentRoute: () => BookingsRoute,
+} as any)
+const BookChefIdRoute = BookChefIdRouteImport.update({
+  id: '/book/$chefId',
+  path: '/book/$chefId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/auth': typeof AuthRoute
+  '/become-a-chef': typeof BecomeAChefRoute
+  '/bookings': typeof BookingsRouteWithChildren
+  '/chefs': typeof ChefsRouteWithChildren
+  '/book/$chefId': typeof BookChefIdRoute
+  '/bookings/$bookingId': typeof BookingsBookingIdRoute
+  '/chef/dashboard': typeof ChefDashboardRoute
+  '/chefs/$chefId': typeof ChefsChefIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/auth': typeof AuthRoute
+  '/become-a-chef': typeof BecomeAChefRoute
+  '/bookings': typeof BookingsRouteWithChildren
+  '/chefs': typeof ChefsRouteWithChildren
+  '/book/$chefId': typeof BookChefIdRoute
+  '/bookings/$bookingId': typeof BookingsBookingIdRoute
+  '/chef/dashboard': typeof ChefDashboardRoute
+  '/chefs/$chefId': typeof ChefsChefIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/auth': typeof AuthRoute
+  '/become-a-chef': typeof BecomeAChefRoute
+  '/bookings': typeof BookingsRouteWithChildren
+  '/chefs': typeof ChefsRouteWithChildren
+  '/book/$chefId': typeof BookChefIdRoute
+  '/bookings/$bookingId': typeof BookingsBookingIdRoute
+  '/chef/dashboard': typeof ChefDashboardRoute
+  '/chefs/$chefId': typeof ChefsChefIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/become-a-chef'
+    | '/bookings'
+    | '/chefs'
+    | '/book/$chefId'
+    | '/bookings/$bookingId'
+    | '/chef/dashboard'
+    | '/chefs/$chefId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/become-a-chef'
+    | '/bookings'
+    | '/chefs'
+    | '/book/$chefId'
+    | '/bookings/$bookingId'
+    | '/chef/dashboard'
+    | '/chefs/$chefId'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/become-a-chef'
+    | '/bookings'
+    | '/chefs'
+    | '/book/$chefId'
+    | '/bookings/$bookingId'
+    | '/chef/dashboard'
+    | '/chefs/$chefId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  AuthRoute: typeof AuthRoute
+  BecomeAChefRoute: typeof BecomeAChefRoute
+  BookingsRoute: typeof BookingsRouteWithChildren
+  ChefsRoute: typeof ChefsRouteWithChildren
+  BookChefIdRoute: typeof BookChefIdRoute
+  ChefDashboardRoute: typeof ChefDashboardRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/chefs': {
+      id: '/chefs'
+      path: '/chefs'
+      fullPath: '/chefs'
+      preLoaderRoute: typeof ChefsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookings': {
+      id: '/bookings'
+      path: '/bookings'
+      fullPath: '/bookings'
+      preLoaderRoute: typeof BookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/become-a-chef': {
+      id: '/become-a-chef'
+      path: '/become-a-chef'
+      fullPath: '/become-a-chef'
+      preLoaderRoute: typeof BecomeAChefRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +202,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chefs/$chefId': {
+      id: '/chefs/$chefId'
+      path: '/$chefId'
+      fullPath: '/chefs/$chefId'
+      preLoaderRoute: typeof ChefsChefIdRouteImport
+      parentRoute: typeof ChefsRoute
+    }
+    '/chef/dashboard': {
+      id: '/chef/dashboard'
+      path: '/chef/dashboard'
+      fullPath: '/chef/dashboard'
+      preLoaderRoute: typeof ChefDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookings/$bookingId': {
+      id: '/bookings/$bookingId'
+      path: '/$bookingId'
+      fullPath: '/bookings/$bookingId'
+      preLoaderRoute: typeof BookingsBookingIdRouteImport
+      parentRoute: typeof BookingsRoute
+    }
+    '/book/$chefId': {
+      id: '/book/$chefId'
+      path: '/book/$chefId'
+      fullPath: '/book/$chefId'
+      preLoaderRoute: typeof BookChefIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface BookingsRouteChildren {
+  BookingsBookingIdRoute: typeof BookingsBookingIdRoute
+}
+
+const BookingsRouteChildren: BookingsRouteChildren = {
+  BookingsBookingIdRoute: BookingsBookingIdRoute,
+}
+
+const BookingsRouteWithChildren = BookingsRoute._addFileChildren(
+  BookingsRouteChildren,
+)
+
+interface ChefsRouteChildren {
+  ChefsChefIdRoute: typeof ChefsChefIdRoute
+}
+
+const ChefsRouteChildren: ChefsRouteChildren = {
+  ChefsChefIdRoute: ChefsChefIdRoute,
+}
+
+const ChefsRouteWithChildren = ChefsRoute._addFileChildren(ChefsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  AuthRoute: AuthRoute,
+  BecomeAChefRoute: BecomeAChefRoute,
+  BookingsRoute: BookingsRouteWithChildren,
+  ChefsRoute: ChefsRouteWithChildren,
+  BookChefIdRoute: BookChefIdRoute,
+  ChefDashboardRoute: ChefDashboardRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
